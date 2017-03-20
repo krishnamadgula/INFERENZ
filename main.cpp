@@ -85,8 +85,9 @@ void ScatterPlotDisplay(){
     glBegin(GL_LINE_STRIP);
     int i=0;
     for (i=0;i<sp.yValues.size();i++){
-            GLfloat x=(sp.xValues[i])*500;
-            GLfloat y=(sp.yValues[i])*500;
+            GLfloat x=(sp.xValues[i]);
+            cout<<"this is x"<<x;
+            GLfloat y=(sp.yValues[i])*100;
         glVertex2f(x,y);
         glColor3f(1,0,0);
     }
@@ -135,28 +136,17 @@ int main(int argc ,char**argv){
 	vector<string> column;
 
 	// for(i=0;i<ColumnCount;++i){
-
 	// 	dataBlock.push_back(column);
-
 	// }
-
-
-
-
-
     // while(getline(fin,row_data))
     // {
     // 	count=0;
     // 	istringstream s(row_data);
     // 	string field;
-
     // 	while(getline(s,field,',')){
     // 		dataBlock[count].push_back(field);
     //    		count=(count+1)%ColumnCount;
     // 	}
-
-
-
     // }
     // vector<float>::size_type i;
 
@@ -169,14 +159,13 @@ int main(int argc ,char**argv){
 	}cout<<endl;
 	// }
 
-
-
     sp.plot_values(dataBlock,2);
     glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
     glutInitWindowSize(500,500);
     glutInitWindowPosition(0,0);
 	glutCreateWindow("INFERENZ");
+    glutDisplayFunc(ScatterPlotDisplay);
     myinit();
     glutMainLoop();
     return 0;

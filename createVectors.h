@@ -49,7 +49,7 @@ class CSV_Row_Data{
 			    	while(getline(lineStream,cell,',')){
 			    		dataBlock[count].push_back(cell);
 			       		count=(count+1)%ColumnCount;
-			       		cout<<count;
+//			       		cout<<count;
 			    	}
 
 			    	// vector<float>::size_type i;
@@ -62,7 +62,7 @@ class CSV_Row_Data{
 		            //     dataBlock.push_back(cell);
 		            // }
 		            // This checks for a trailing comma with no data after it.
-		            cout<<"here1";
+//		            cout<<"here1";
 		            if (!lineStream && cell.empty())
 		            {
 		                // If there was a trailing comma then add an empty element.
@@ -70,7 +70,7 @@ class CSV_Row_Data{
 		                dataBlock[count].push_back("");
 		                count=(count+1)%ColumnCount;
 		            }
-		            cout<<"here2";
+//		            cout<<"here2";
 
 		        }
 		        return dataBlock;

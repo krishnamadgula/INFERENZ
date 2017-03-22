@@ -109,8 +109,9 @@ class BoxPlot{
             }
             average_value=sum/(yValues.size());
             min_value =yValues[0];
+//            cout<<min_value<<endl;
             max_value=yValues[yValues.size()-1];
-
+//            cout<<max_value<<endl;
 
 //             for(j=0;j<floatValues.size();++j){
 //                 cout<<yValues[j]<<endl;
@@ -161,26 +162,22 @@ void BoxPlotDisplay(){
     int i=0;
     GLfloat ymax=bp.max_value*100;
     GLfloat ymin=bp.min_value*100;
+    cout<<ymin<<" "<<ymax;
     GLfloat yavg=bp.average_value*100;
-    glBegin(GL_POLYGON);
-    GLfloat xmin=10;
-    GLfloat xmax=30;
     glColor3f(1,0,1);
+    glBegin(GL_LINE_LOOP);
+    GLfloat xmin=100;
+    GLfloat xmax=300;
+
     glVertex2f(xmin,ymin);
     glVertex2f(xmin,ymax);
     glVertex2f(xmax,ymax);
     glVertex2f(xmax,ymin);
     glEnd();
-    glBegin(GL_LINE);
+    glColor3f(1,0,1);
+    glBegin(GL_LINES);
     glVertex2f(xmin,yavg);
     glVertex2f(xmax,yavg);
-    glEnd();
-    glFlush();
-
-
-
-
-
     glEnd();
     glFlush();
 
@@ -193,7 +190,7 @@ void myinit()
     glPointSize(1.0);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0.0,499.0,0.0,100.0);
+    gluOrtho2D(0.0,499.0,0.0,500.0);
 }
 
 int main(int argc ,char**argv){

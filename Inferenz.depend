@@ -9,7 +9,7 @@
 	<sstream>
 	<GL/glut.h>
 
-1489924940 source:c:\users\krishna\desktop\code blocks things\programs\inferenz\main.cpp
+1490155310 source:c:\users\krishna\desktop\code blocks things\programs\inferenz\main.cpp
 	"createVectors.h"
 	<iostream>
 	<vector>
@@ -18,10 +18,12 @@
 	<cstdlib>
 	<typeinfo>
 	<sstream>
-	<GL/glut.h>
+	<algorithm>
 	<windows.h>
+	<windows.h>
+	<GL/glut.h>
 
-1489925010 c:\users\krishna\desktop\code blocks things\programs\inferenz\createvectors.h
+1490110020 c:\users\krishna\desktop\code blocks things\programs\inferenz\createvectors.h
 	<iostream>
 	<vector>
 	<fstream>

@@ -140,6 +140,9 @@ class BoxPlot{
             }
             average_value=sum/(yValues.size());
             min_value =yValues[0];
+            firstQuartile=yValues[(yValues.size()/4)-1];
+            thirdQuartile=yValues[((yValues.size()/4)*3)-1];
+
 //            cout<<min_value<<endl;
             max_value=yValues[yValues.size()-1];
 //            cout<<max_value<<endl;
@@ -159,6 +162,8 @@ class BoxPlot{
         vector<float> yValues;
         float average_value;
         float min_value,max_value;
+        float firstQuartile,thirdQuartile;
+
 
 
 //        vector<float> xValues;
@@ -214,8 +219,12 @@ void BoxPlotDisplay(){
     glClear(GL_COLOR_BUFFER_BIT);
 
 //    int i=0;
-    GLfloat ymax=(bp.max_value*100)+100;
     GLfloat ymin=(bp.min_value*100)+100;
+    GLfloat ymax=(bp.max_value*100)+100;
+    GLfloat ythird=(bp.thirdQuartile*100)+100;
+    GLfloat yfirst=(bp.firstQuartile*100)+100;
+    GLfloat xmin=100;
+    GLfloat xmax=300;
     cout<<ymin<<" "<<ymax;
     GLfloat yavg=(bp.average_value*100)+100;
 //    char*i=ColumnNames[2];
@@ -226,7 +235,7 @@ void BoxPlotDisplay(){
     for (i=ColumnNames[3][m];m!=strlen(ColumnNames[3].c_str());++m)
     {
         cout<<ColumnNames[3][m];
-        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,(i));
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,ColumnNames[3][m]);
     }
 //    char str_col[]=ColumnNames[3].c_str();
 
@@ -236,19 +245,31 @@ void BoxPlotDisplay(){
     glColor3f(1,0,1);
 
     glBegin(GL_LINE_LOOP);
-    GLfloat xmin=100;
-    GLfloat xmax=300;
-
-    glVertex2f(xmin,ymin);
-    glVertex2f(xmin,ymax);
-    glVertex2f(xmax,ymax);
-    glVertex2f(xmax,ymin);
+    glVertex2f(xmin,yfirst);
+    glVertex2f(xmin,ythird);
+    glVertex2f(xmax,ythird);
+    glVertex2f(xmax,yfirst);
     glEnd();
+
     glColor3f(1,0,1);
     glBegin(GL_LINES);
     glVertex2f(xmin,yavg);
     glVertex2f(xmax,yavg);
+
     glEnd();
+    glColor3f(1,0,0);
+    glBegin(GL_LINES);
+    glVertex2f(xmin,ymin);
+    glVertex2f(xmax,ymin);
+    glEnd();
+
+    glColor3f(1,0,0);
+    glBegin(GL_LINES);
+    glVertex2f(xmin,ymax);
+    glVertex2f(xmax,ymax);
+    glEnd();
+
+
     glFlush();
 
 }
@@ -323,16 +344,16 @@ int main(int argc ,char**argv){
 //	}cout<<endl;
 	// }
 
-    sp.plot_values(dataBlock,3);
-    sp.plot_relationship_values(dataBlock,6,7);
+//    sp.plot_values(dataBlock,3);
+//    sp.plot_relationship_values(dataBlock,6,7);
     bp.plot_values(dataBlock,3);
     glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
     glutInitWindowSize(500,500);
     glutInitWindowPosition(0,0);
 	glutCreateWindow("INFERENZ");
-    glutDisplayFunc(ScatterPlotDisplay);
-//    glutDisplayFunc(BoxPlotDisplay);
+//    glutDisplayFunc(ScatterPlotDisplay);
+    glutDisplayFunc(BoxPlotDisplay);
 
 
     myinit();

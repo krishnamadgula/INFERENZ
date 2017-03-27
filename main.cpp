@@ -317,32 +317,7 @@ int main(int argc ,char**argv){
 	int ColumnCount=0;
 	cin>>ColumnCount;
 	vector<string> column;
-
-
-
-	// for(i=0;i<ColumnCount;++i){
-	// 	dataBlock.push_back(column);
-	// }
-    // while(getline(fin,row_data))
-    // {
-    // 	count=0;
-    // 	istringstream s(row_data);
-    // 	string field;
-    // 	while(getline(s,field,',')){
-    // 		dataBlock[count].push_back(field);
-    //    		count=(count+1)%ColumnCount;
-    // 	}
-    // }
-    // vector<float>::size_type i;
-
-//    	cout<<"hi";
-    	dataBlock=rows.readRows(fin,ColumnCount);
-
-    // for (i=0;i<ColumnCount;++i){
-//	for (j=0;j<dataBlock[2].size();j++){
-//		cout<<dataBlock[2][j]<<"-";
-//	}cout<<endl;
-	// }
+    dataBlock=rows.readRows(fin,ColumnCount);
 
 //    sp.plot_values(dataBlock,3);
 //    sp.plot_relationship_values(dataBlock,6,7);
@@ -361,21 +336,7 @@ int main(int argc ,char**argv){
     return 0;
 
 
-//	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_DEPTH);
-//	glutInitWindowSize(500,500);
-//	glutCreateWindow("INFERENZ");
-////	glutReshapeFunc(myReshape);
-//
-//	glMatrixMode(GL_PROJECTION);
-//    glLoadIdentity();
-//    gluOrtho2D(0,100,0,100);
-//    glMatrixMode(GL_MODELVIEW);
-//    glClearColor(0.0f,0.0f,0.0f,0.0f);
-//    glutDisplayFunc(ScatterPlotDisplay);
-////	glutMouseFunc(mouse);
-////	glutKeyboardFunc(keys);
-//	glEnable(GL_DEPTH_TEST);
-//	glutMainLoop();
+
 
 }
 
@@ -469,10 +430,3 @@ int main(int argc ,char**argv){
 // glutMainLoop();
 // return 0;
 //}
-//
-
-
-
-
-
-

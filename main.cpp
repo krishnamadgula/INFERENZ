@@ -27,6 +27,7 @@ namespace patch
 }
 
 using namespace std;
+vector <string> ColumnNames;
 
 class ScatterPlot{
 
@@ -65,17 +66,47 @@ class ScatterPlot{
 //                 cout<<yValues[j]<<endl;
 //             }
 
+        }
 
 
+        void plot_relationship_values(vector<vector<string> > dataBlock,int colx,int coly)
+        {
+            int j=0;
+            vector<float> floatValues;
 
+            for(j=0;j<dataBlock[coly].size();++j)
+            {
+                // floatValues[j].push_back(j+1);
+                floatValues.push_back(atof(dataBlock[colx][j].c_str()));
+                yValues_relationship.push_back(floatValues[j]);
 
+            }
 
+            floatValues.clear();
+            for(j=0;j<dataBlock[colx].size();++j)
+            {
+                // floatValues[j].push_back(j+1);
+                floatValues.push_back(atof(dataBlock[coly][j].c_str()));
+                xValues_relationship.push_back(floatValues[j]);
+
+            }
+            vector<float> sortedXvalues(xValues_relationship);
+            vector<float> sortedYvalues(yValues_relationship);
+            sort(sortedXvalues.begin(),sortedXvalues.end());
+            sort(sortedYvalues.begin(),sortedYvalues.end());
+            for (j=0;j<dataBlock[colx].size();++j){
+                xValues_relationship[j]=xValues_relationship[j]/sortedXvalues[sortedXvalues.size()-1];
+                yValues_relationship[j]=yValues_relationship[j]/sortedYvalues[sortedYvalues.size()-1];
+
+            }
 
 
         }
+
         vector<float> yValues;
         vector<float> xValues;
-
+        vector<float> yValues_relationship;
+        vector<float> xValues_relationship;
 
 };
 
@@ -129,6 +160,7 @@ class BoxPlot{
         float average_value;
         float min_value,max_value;
 
+
 //        vector<float> xValues;
 
 
@@ -140,31 +172,69 @@ BoxPlot bp;
 
 
 void ScatterPlotDisplay(){
+//    cout<<"enter arguments for scatter plot"<<endl<<"1:RelationShip Plot"<<"2:Continuity Plot";
+	char*sc_args="1";
+//	cin>>sc_args;
     glClear(GL_COLOR_BUFFER_BIT);
-    glBegin(GL_LINE_STRIP);
+
     int i=0;
-    for (i=0;i<sp.yValues.size();i++){
-        GLfloat x=(sp.xValues[i]);
-        GLfloat y=(sp.yValues[i])*100;
-//        cout<<y<<endl;
-        glVertex2f(x,y);
-        glColor3f(1,0,0);
+    glPointSize(2);
+    if(strcmp(sc_args,"1")==0){
+        glBegin(GL_POINTS);
+        for (i=0;i<sp.yValues_relationship.size();i++){
+//            cout<<(sp.xValues_relationship[i])*500<<(sp.yValues_relationship[i])*500;
+
+            GLfloat x1=((sp.xValues_relationship[i])*300)+50;
+            GLfloat y1=((sp.yValues_relationship[i])*300)+50;
+            glVertex2f(x1,y1);
+            glColor3f(0,0,1);
+
+        }
+        glEnd();
+        glFlush();
+
     }
+    else{
 
-    glEnd();
-    glFlush();
+        glBegin(GL_POINTS);
+        for (i=0;i<sp.yValues.size();i++){
+            GLfloat x=(sp.xValues[i]);
+            GLfloat y=(sp.yValues[i])*500;
+    //        cout<<y<<endl;
+            glVertex2f(x,y);
+            glColor3f(1,0,0);
+        }
 
+        glEnd();
+        glFlush();
+    }
 }
 
 void BoxPlotDisplay(){
     glClear(GL_COLOR_BUFFER_BIT);
 
-    int i=0;
-    GLfloat ymax=bp.max_value*100;
-    GLfloat ymin=bp.min_value*100;
+//    int i=0;
+    GLfloat ymax=(bp.max_value*100)+100;
+    GLfloat ymin=(bp.min_value*100)+100;
     cout<<ymin<<" "<<ymax;
-    GLfloat yavg=bp.average_value*100;
+    GLfloat yavg=(bp.average_value*100)+100;
+//    char*i=ColumnNames[2];
+    char i;
+    int m=0;
+    glRasterPos2i(200,0);
     glColor3f(1,0,1);
+    for (i=ColumnNames[3][m];m!=strlen(ColumnNames[3].c_str());++m)
+    {
+        cout<<ColumnNames[3][m];
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,(i));
+    }
+//    char str_col[]=ColumnNames[3].c_str();
+
+    // char *a2=ColumnNames[3].c_str();
+//    for (i=str_col;*i!='\0';i++)
+//    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,(i));
+    glColor3f(1,0,1);
+
     glBegin(GL_LINE_LOOP);
     GLfloat xmin=100;
     GLfloat xmax=300;
@@ -187,10 +257,10 @@ void myinit()
 {
     glClearColor(1.0,1.0,1.0,1.0);
     glColor3f(1.0,0.0,0.0);
-    glPointSize(1.0);
+    glPointSize(3.0);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0.0,499.0,0.0,500.0);
+    gluOrtho2D(0.0,500.0,0.0,300.0);
 }
 
 int main(int argc ,char**argv){
@@ -216,11 +286,18 @@ int main(int argc ,char**argv){
 	cout<<"specify no of columns";
 
 	getline(fin,row_data);
+	string cell;
+	istringstream lineStream(row_data);
+	while(getline(lineStream,cell,',')){
+        ColumnNames.push_back(cell);
+	}
 	cout<<row_data;
 	int count=0;
 	int ColumnCount=0;
 	cin>>ColumnCount;
 	vector<string> column;
+
+
 
 	// for(i=0;i<ColumnCount;++i){
 	// 	dataBlock.push_back(column);
@@ -247,14 +324,15 @@ int main(int argc ,char**argv){
 	// }
 
     sp.plot_values(dataBlock,3);
+    sp.plot_relationship_values(dataBlock,6,7);
     bp.plot_values(dataBlock,3);
     glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
-    glutInitWindowSize(250,250);
+    glutInitWindowSize(500,500);
     glutInitWindowPosition(0,0);
 	glutCreateWindow("INFERENZ");
-//    glutDisplayFunc(ScatterPlotDisplay);
-    glutDisplayFunc(BoxPlotDisplay);
+    glutDisplayFunc(ScatterPlotDisplay);
+//    glutDisplayFunc(BoxPlotDisplay);
 
 
     myinit();
@@ -283,7 +361,7 @@ int main(int argc ,char**argv){
 
 
 
-
+//FRONT PAGE
 //#include <GL/glut.h>
 //#include<string.h>
 ////#include<GL/freeglut.h>
@@ -370,12 +448,10 @@ int main(int argc ,char**argv){
 // glutMainLoop();
 // return 0;
 //}
-////main.cpp
-////Open with Drive Notepad
-////Displaying main.cpp.
 //
-//
-//
-//
-//
-//
+
+
+
+
+
+

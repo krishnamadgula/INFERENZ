@@ -113,56 +113,54 @@ class ScatterPlot{
 class BoxPlot{
 
     public:
-        void plot_values(vector <vector<string> > dataBlock,int col)
+        void plot_values(vector <vector<string> > dataBlock,vector<int> col)
         {
             int i=0,j=0;
-
+            int k=0;
+            columnsForBoxPLot=col;
             vector<float> floatValues;
+            for(k=0;k<col.size();++k){
+                floatValues.clear();
 
-            for(j=0;j<dataBlock[col].size();++j)
-            {
 
-                floatValues.push_back(atof(dataBlock[col][j].c_str()));
-                yValues.push_back(floatValues[j]);
+                for(j=0;j<dataBlock[col[k]].size();++j)
+                {
+
+                    floatValues.push_back(atof(dataBlock[col[k]][j].c_str()));
+
+
+                }
+
+                sort(floatValues.begin(),floatValues.end());
+
+
+                for(i=0;i<floatValues.size();++i){
+                    floatValues[i]=floatValues[i]/ (floatValues[floatValues.size()-1]);
+                }
+                float sum=0;
+                for(i=0;i<floatValues.size();++i){
+                    sum+=floatValues[i];
+//                    cout<<floatValues[i]<<endl;
+
+                }
+
+                average_value.push_back(sum/(floatValues.size()));
+                min_value.push_back(floatValues[0]);
+                firstQuartile.push_back(floatValues[(floatValues.size()/4)-1]);
+                thirdQuartile.push_back( floatValues[((floatValues.size()/4)*3)-1]);
+
+    //            cout<<min_value<<endl;
+                max_value.push_back(floatValues[floatValues.size()-1]);
+                yValues.push_back(floatValues);
 
             }
-
-            sort(yValues.begin(),yValues.end());
-
-
-            for(i=0;i<yValues.size();++i){
-                yValues[i]=yValues[i]/ (yValues[yValues.size()-1]);
-            }
-            float sum=0;
-            for(i=0;i<yValues.size();++i){
-                sum+=yValues[i];
-
-            }
-            average_value=sum/(yValues.size());
-            min_value =yValues[0];
-            firstQuartile=yValues[(yValues.size()/4)-1];
-            thirdQuartile=yValues[((yValues.size()/4)*3)-1];
-
-//            cout<<min_value<<endl;
-            max_value=yValues[yValues.size()-1];
-//            cout<<max_value<<endl;
-
-//             for(j=0;j<floatValues.size();++j){
-//                 cout<<yValues[j]<<endl;
-//             }
-
-
-
-
-
-
-
 
         }
-        vector<float> yValues;
-        float average_value;
-        float min_value,max_value;
-        float firstQuartile,thirdQuartile;
+        vector<vector<float> > yValues;
+        vector<float >average_value;
+        vector<float >min_value,max_value;
+        vector<float >firstQuartile,thirdQuartile;
+        vector<int>columnsForBoxPLot;
 
 
 
@@ -217,60 +215,70 @@ void ScatterPlotDisplay(){
 
 void BoxPlotDisplay(){
     glClear(GL_COLOR_BUFFER_BIT);
+    int cols=0;
+    GLfloat xmin=10;
+    GLfloat xmax=15;
+    int offset=(500/(bp.yValues.size()*3));
+    for (cols=0;cols<bp.yValues.size();cols++){
+    //    int i=0;
+        cout <<bp.firstQuartile[cols]<<"is ymin"<<bp.thirdQuartile[cols]<<"is ymax";
+        GLfloat ymin=(bp.min_value[cols]*100)+100;
+        GLfloat ymax=(bp.max_value[cols]*100)+100;
+        xmin=xmax+offset;
+        xmax=xmin+offset;
+        GLfloat ythird=(bp.thirdQuartile[cols]*100)+100;
+        GLfloat yfirst=(bp.firstQuartile[cols]*100)+100;
 
-//    int i=0;
-    GLfloat ymin=(bp.min_value*100)+100;
-    GLfloat ymax=(bp.max_value*100)+100;
-    GLfloat ythird=(bp.thirdQuartile*100)+100;
-    GLfloat yfirst=(bp.firstQuartile*100)+100;
-    GLfloat xmin=100;
-    GLfloat xmax=300;
-    cout<<ymin<<" "<<ymax;
-    GLfloat yavg=(bp.average_value*100)+100;
-//    char*i=ColumnNames[2];
-    char i;
-    int m=0;
-    glRasterPos2i(200,0);
-    glColor3f(1,0,1);
-    for (i=ColumnNames[3][m];m!=strlen(ColumnNames[3].c_str());++m)
-    {
-        cout<<ColumnNames[3][m];
-        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,ColumnNames[3][m]);
+//        cout<<ymin<<" "<<ymax;
+        GLfloat yavg=(bp.average_value[cols]*100)+100;
+    //    char*i=ColumnNames[2];
+        char i;
+        int m=0;
+        glRasterPos2i((xmin),0);
+        glColor3f(1,0,1);
+
+        for (i=0;m!=strlen(ColumnNames[bp.columnsForBoxPLot[cols]].c_str());++m)
+        {
+            cout<<ColumnNames[bp.columnsForBoxPLot[cols]][m];
+            //COLUMN NAMES PLOTTING
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,ColumnNames[bp.columnsForBoxPLot[cols]][m]);
+        }
+    //    char str_col[]=ColumnNames[3].c_str();
+
+        // char *a2=ColumnNames[3].c_str();
+    //    for (i=str_col;*i!='\0';i++)
+    //    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,(i));
+        glColor3f(1,0,1);
+
+        glBegin(GL_LINE_LOOP);
+        glVertex2f(xmin,yfirst);
+        glVertex2f(xmin,ythird);
+        glVertex2f(xmax,ythird);
+        glVertex2f(xmax,yfirst);
+        glEnd();
+
+        glColor3f(1,0,1);
+        glBegin(GL_LINES);
+        glVertex2f(xmin,yavg);
+        glVertex2f(xmax,yavg);
+
+        glEnd();
+        glColor3f(1,0,0);
+        glBegin(GL_LINES);
+        glVertex2f(xmin,ymin);
+        glVertex2f(xmax,ymin);
+        glEnd();
+
+        glColor3f(1,0,0);
+        glBegin(GL_LINES);
+        glVertex2f(xmin,ymax);
+        glVertex2f(xmax,ymax);
+        glEnd();
+
+
     }
-//    char str_col[]=ColumnNames[3].c_str();
-
-    // char *a2=ColumnNames[3].c_str();
-//    for (i=str_col;*i!='\0';i++)
-//    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,(i));
-    glColor3f(1,0,1);
-
-    glBegin(GL_LINE_LOOP);
-    glVertex2f(xmin,yfirst);
-    glVertex2f(xmin,ythird);
-    glVertex2f(xmax,ythird);
-    glVertex2f(xmax,yfirst);
-    glEnd();
-
-    glColor3f(1,0,1);
-    glBegin(GL_LINES);
-    glVertex2f(xmin,yavg);
-    glVertex2f(xmax,yavg);
-
-    glEnd();
-    glColor3f(1,0,0);
-    glBegin(GL_LINES);
-    glVertex2f(xmin,ymin);
-    glVertex2f(xmax,ymin);
-    glEnd();
-
-    glColor3f(1,0,0);
-    glBegin(GL_LINES);
-    glVertex2f(xmin,ymax);
-    glVertex2f(xmax,ymax);
-    glEnd();
-
-
     glFlush();
+
 
 }
 
@@ -317,11 +325,14 @@ int main(int argc ,char**argv){
 	int ColumnCount=0;
 	cin>>ColumnCount;
 	vector<string> column;
+	vector<int> c;
+	c.push_back(0);
+	c.push_back(3);
     dataBlock=rows.readRows(fin,ColumnCount);
 
 //    sp.plot_values(dataBlock,3);
 //    sp.plot_relationship_values(dataBlock,6,7);
-    bp.plot_values(dataBlock,3);
+    bp.plot_values(dataBlock,c);
     glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
     glutInitWindowSize(500,500);

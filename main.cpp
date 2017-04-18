@@ -18,10 +18,45 @@
 #include <GL/glut.h>
 //#include <GL/glui.h>
 //#pragma comment(lib, "glui32.lib")
+static int menu_id;
+static int submenu_id;
+static int value = 0;
+int window;
 void display_scatter();
 void display_box();
 void display_bar();
 void display_scatter_3D();
+void ScatterPlotDisplay();
+void BoxPlotDisplay();
+void BarplotDisplay();
+void menu(int num){
+    if(num == 0){
+        glutDestroyWindow(window);
+        exit(0);
+    }
+    else
+    {
+        value = num;
+        cout<<value;
+//        return;
+        glutPostRedisplay();
+    }
+
+}
+//void create_a_menu(){
+//    submenu_id=glutCreateMenu(menu);
+//    menu_id=glutCreateMenu(menu);
+//    glutAddMenuEntry("scatterplot",1);
+//    glutAddMenuEntry("boxplot",2);
+//    glutAddMenuEntry("barplot",3);
+//
+//    glutAddMenuEntry("3D scatterplot",4);
+//    glutAddMenuEntry("quit",0);
+//    glutAttachMenu(GLUT_RIGHT_BUTTON);
+//
+//}
+
+
 void drawStrokeText(basic_string<char> string1,int x,int y,int z,float angle_of_rotation)
 {
     char *c;
@@ -456,7 +491,6 @@ void ScatterPlotDisplay(){
         glFlush();
     }
 }
-
 void BoxPlotDisplay(){
     glClear(GL_COLOR_BUFFER_BIT);
     int cols=0;
@@ -546,6 +580,34 @@ void myinit2()
     glLoadIdentity();
     glOrtho(0.0,500.0,0.0,500.0,500,-500);
 }
+void display(){
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawStrokeTextHeader("INFERENZ",250,250,1,0,0.2,0.2);
+    if (value==1){
+        display_scatter();
+        myinit();
+    }
+
+    else if (value==2){
+
+        display_box();
+        myinit();
+    }
+    else if (value==3){
+        display_bar();
+        myinit();
+    }
+
+    else if(value==4){
+        display_scatter_3D();
+        myinit2();
+    }
+
+    glutPostRedisplay();
+    glFlush();
+
+}
+
 
 int main(int argc ,char**argv){
  	char name[255];
@@ -593,7 +655,19 @@ int main(int argc ,char**argv){
     glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
     glutInitWindowSize(500,500);
     glutInitWindowPosition(0,0);
-	int window_id=glutCreateWindow("INFERENZ");
+	window=glutCreateWindow("INFERENZ");
+	glutDisplayFunc(display);
+	menu_id=glutCreateMenu(menu);
+    glutAddMenuEntry("scatterplot",1);
+    glutAddMenuEntry("boxplot",2);
+    glutAddMenuEntry("barplot",3);
+
+    glutAddMenuEntry("3D scatterplot",4);
+    glutAddMenuEntry("quit",0);
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
+
+//	glutSetMenu(menu_id);
+	cout<<"values is"<<value;
 //    GLUI_Master.set_glutIdleFunc(NULL);
     int flags,x,y;
 //    GLUI_Master_Object glui;
@@ -601,27 +675,29 @@ int main(int argc ,char**argv){
     int if_sc=0,if_bp=0;
     int ch;
 
-    cout<<"\nEnter what kind of a plot to display 0->scatter  1->box 2->barplot  3->scatterplot3d"<<endl;
-    cin>>ch;
-    if (ch==0){
-        display_scatter();
-        myinit();
-    }
 
-    else if (ch==1){
+//    cout<<"\nEnter what kind of a plot to display 0->scatter  1->box  2->barplot  3-> scatterplot3d"<<endl;
+//    cin>>ch;
+//    if (ch==0){
+//        display_scatter();
+//        myinit();
+//    }
+//
+//    else if (ch==1){
+//
+//        display_box();
+//        myinit();
+//    }
+//    else if (ch==2){
+//        display_bar();
+//        myinit();
+//    }
+//
+//    else if(ch==3){
+//        display_scatter_3D();
+//        myinit2();
+//    }
 
-        display_box();
-        myinit();
-    }
-    else if (ch==2){
-        display_bar();
-        myinit();
-    }
-
-    else if(ch==3){
-        display_scatter_3D();
-        myinit2();
-    }
 
 
 
@@ -637,17 +713,31 @@ int main(int argc ,char**argv){
 }
 
 void display_scatter_3D(){
+
+    glutInitWindowSize(500,500);
+    glutInitWindowPosition(0,0);
+    glutCreateWindow("scatter");
     glutDisplayFunc(ScatterPlot_3D_Display);
 
 }
 void display_scatter(){
+    cout<<"hi here";
+    glutInitWindowSize(500,500);
+    glutInitWindowPosition(0,0);
+    glutCreateWindow("scatter");
     glutDisplayFunc(ScatterPlotDisplay);
 
 }
 void display_box(){
+    glutInitWindowSize(500,500);
+    glutInitWindowPosition(0,0);
+    glutCreateWindow("box");
     glutDisplayFunc(BoxPlotDisplay);
 }
 void display_bar(){
+    glutInitWindowSize(500,500);
+    glutInitWindowPosition(0,0);
+    glutCreateWindow("bar");
     glutDisplayFunc(BarplotDisplay);
 }
 

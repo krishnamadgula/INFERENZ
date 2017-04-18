@@ -21,21 +21,37 @@
 void display_scatter();
 void display_box();
 void display_bar();
+void display_scatter_3D();
 void drawStrokeText(basic_string<char> string1,int x,int y,int z,float angle_of_rotation)
 {
-	  char *c;
-	  glPushMatrix();
-	  glTranslatef(x+2, y,z);
-	  glScalef(0.03f,0.05f,z);
-      int m=0;
-      glRotatef(angle_of_rotation,0,1,0);
-	  for (; m != strlen(string1.c_str()); m++)
-	  {
-    		glutStrokeCharacter(GLUT_STROKE_ROMAN , string1[m]);
-	  }
-	  glPopMatrix();
+    char *c;
+    glPushMatrix();
+    glTranslatef(x+2, y,z);
+    glScalef(0.03f,0.05f,z);
+    int m=0;
+    glRotatef(angle_of_rotation,1,0,0);
+    for (; m != strlen(string1.c_str()); m++)
+    {
+        glutStrokeCharacter(GLUT_STROKE_ROMAN , string1[m]);
+    }
+    glPopMatrix();
 }
 
+void drawStrokeTextHeader(basic_string<char> string1,int x,int y,int z,float angle_of_rotation,float scalex=0.08,float scaley=0.09)
+{
+    char *c;
+    glPushMatrix();
+    glTranslatef(x+2, y,z);
+    glScalef(scalex,scaley,z);
+    int m=0;
+    glRotatef(angle_of_rotation,1,0,0);
+
+    for (; m != strlen(string1.c_str()); m++)
+    {
+        glutStrokeCharacter(GLUT_STROKE_ROMAN , string1[m]);
+    }
+    glPopMatrix();
+}
 namespace patch
 {
     template < typename T > std::string to_string( const T& n )
@@ -48,6 +64,46 @@ namespace patch
 
 using namespace std;
 vector <string> ColumnNames;
+class ScatterPlot3D{
+    public:
+        void plot_relationship_values(vector<vector<string> > dataBlock,int colx,int coly,int colz)
+        {
+            int i=0,j=0;
+            sp_colx=colx;
+            sp_coly=coly;
+            sp_colz=colz;
+            vector<float> floatValues;
+            for(j=0;j<dataBlock[coly].size();++j)
+            {
+                // floatValues[j].push_back(j+1);
+                floatValues.push_back(atof(dataBlock[colx][j].c_str()));
+                yValues.push_back(floatValues[j]);
+
+            }
+            floatValues.clear();
+            for(j=0;j<dataBlock[colx].size();++j)
+            {
+                // floatValues[j].push_back(j+1);
+                floatValues.push_back(atof(dataBlock[colx][j].c_str()));
+                xValues.push_back(floatValues[j]);
+
+            }
+            floatValues.clear();
+            for(j=0;j<dataBlock[colz].size();++j)
+            {
+                // floatValues[j].push_back(j+1);
+                floatValues.push_back(atof(dataBlock[colz][j].c_str()));
+                zValues.push_back(floatValues[j]);
+
+            }
+
+        }
+        vector<float> yValues;
+        vector<float> xValues;
+        vector<float> zValues;
+        int sp_colx,sp_coly,sp_colz;
+
+};
 
 class ScatterPlot{
 
@@ -155,10 +211,10 @@ class BarPlot{
                 s.clear();
                 s.append(patch::to_string(min_value));
                 s.append("-");
-                s.append(patch::to_string(max_value));
+                s.append(patch::to_string(min_value+offset));
                 names_for_various_bars.push_back(s);
                 min_value+=offset;
-                max_value+=offset;
+//                max_value+=offset;
             }
             min_value=floatValues[0];
             for(i=0;i<bars;++i)counts.push_back(0);
@@ -239,9 +295,9 @@ class BoxPlot{
 
 
 ScatterPlot sp;
+ScatterPlot3D sp3;
 BoxPlot bp;
 BarPlot bap;
-
 
 void BarplotDisplay(){
     glClear(GL_COLOR_BUFFER_BIT);
@@ -262,11 +318,13 @@ void BarplotDisplay(){
     for(i=0;i<bap.counts.size();++i)cout<<endl<<bap.counts[i];
 
     int max_value=*max_element(bap.counts.begin(),bap.counts.end());
-    cout<<max_value;
+    cout<<"max_value of counts vector is"<<max_value;
     for(i=0;i<bap.counts.size();++i){
         yValues.push_back((((bap.counts[i])/max_value)*250)+50);
 //        cout<<endl<<(float)((float)(bap.counts[i])/max_value)*250;
     }
+    drawStrokeTextHeader(ColumnNames[bap.col_for_bar_plot],250,400,1,0,0.1,.1);
+
     GLfloat xmin=55,ymin=50;
     GLfloat xmax=280;
     GLfloat offset=250/(bap.no_of_bars*3);
@@ -278,13 +336,32 @@ void BarplotDisplay(){
         glVertex2f(xmin+offset,yValues[i]);
         glVertex2f(xmin,yValues[i]);
         glEnd();
-
+        drawStrokeText(bap.names_for_various_bars[i],xmin,45,1,0);
         xmin=xmin+(2*offset);
 
     }
     glFlush();
 
 }
+
+void ScatterPlot_3D_Display(){
+    glClear(GL_COLOR_BUFFER_BIT);
+    int i=0,j=0,k=0;
+    glBegin(GL_LINES);
+    glColor3f(0,1,0);
+    glVertex3f(25,25,25);
+    glVertex3f(25,25,300);
+    glVertex3f(25,25,25);
+    glVertex3f(25,300,25);
+    glVertex3f(25,25,25);
+    glVertex3f(300,25,25);
+    glEnd();
+
+//    for(i=0;i<sp3.yValues.size();i++){
+//
+//    }
+}
+
 
 
 void ScatterPlotDisplay(){
@@ -321,7 +398,7 @@ void ScatterPlotDisplay(){
         glEnd();
 
         int m=0;
-        drawStrokeText(ColumnNames[sp.sp_coly],0,150,0,1.57);
+        drawStrokeText(ColumnNames[sp.sp_coly],0,150,0,3.14);
         drawStrokeText(ColumnNames[sp.sp_colx],150,10,0,0);
 //        glPushMatrix();
 //
@@ -458,6 +535,17 @@ void myinit()
     glLoadIdentity();
     gluOrtho2D(0.0,500.0,0.0,500.0);
 }
+void myinit2()
+{
+    glClearColor(1.0,1.0,1.0,1.0);
+    glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGB);
+    glColor3f(1.0,0.0,0.0);
+    glEnable(GL_DEPTH_BUFFER_BIT);
+    glPointSize(4.0);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0,500.0,0.0,500.0,500,-500);
+}
 
 int main(int argc ,char**argv){
  	char name[255];
@@ -497,6 +585,7 @@ int main(int argc ,char**argv){
 	c.push_back(3);
     dataBlock=rows.readRows(fin,ColumnCount);
     bap.plot_values(dataBlock,0,5);
+    sp3.plot_relationship_values(dataBlock,0,2,3);
     sp.plot_values(dataBlock,3);
     sp.plot_relationship_values(dataBlock,0,3);
     bp.plot_values(dataBlock,c);
@@ -512,12 +601,28 @@ int main(int argc ,char**argv){
     int if_sc=0,if_bp=0;
     int ch;
 
-    cout<<"\nEnter what kind of a plot to display 0->scatter  1->box 2->barplot"<<endl;
+    cout<<"\nEnter what kind of a plot to display 0->scatter  1->box 2->barplot  3->scatterplot3d"<<endl;
     cin>>ch;
-    if (ch==0)display_scatter();
-    else if (ch==1) display_box();
-    else if (ch==2) display_bar();
-    myinit();
+    if (ch==0){
+        display_scatter();
+        myinit();
+    }
+
+    else if (ch==1){
+
+        display_box();
+        myinit();
+    }
+    else if (ch==2){
+        display_bar();
+        myinit();
+    }
+
+    else if(ch==3){
+        display_scatter_3D();
+        myinit2();
+    }
+
 
 
 //    glui1->add_button("scatter plot",if_sc);
@@ -530,6 +635,11 @@ int main(int argc ,char**argv){
     return 0;
 
 }
+
+void display_scatter_3D(){
+    glutDisplayFunc(ScatterPlot_3D_Display);
+
+}
 void display_scatter(){
     glutDisplayFunc(ScatterPlotDisplay);
 
@@ -540,6 +650,7 @@ void display_box(){
 void display_bar(){
     glutDisplayFunc(BarplotDisplay);
 }
+
 
 //FRONT PAGE
 //#include <GL/glut.h>

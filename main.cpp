@@ -16,6 +16,26 @@
 #endif
 #include<windows.h>
 #include <GL/glut.h>
+//#include <GL/glui.h>
+//#pragma comment(lib, "glui32.lib")
+void display_scatter();
+void display_box();
+void display_bar();
+void drawStrokeText(basic_string<char> string1,int x,int y,int z,float angle_of_rotation)
+{
+	  char *c;
+	  glPushMatrix();
+	  glTranslatef(x+2, y,z);
+	  glScalef(0.03f,0.05f,z);
+      int m=0;
+      glRotatef(angle_of_rotation,0,1,0);
+	  for (; m != strlen(string1.c_str()); m++)
+	  {
+    		glutStrokeCharacter(GLUT_STROKE_ROMAN , string1[m]);
+	  }
+	  glPopMatrix();
+}
+
 namespace patch
 {
     template < typename T > std::string to_string( const T& n )
@@ -35,6 +55,7 @@ class ScatterPlot{
         void plot_values(vector <vector<string> > dataBlock,int col)
         {
             int i=0,j=0;
+            sp_colx_no_relationship=col;
 //            vector <vector<float> > floatValues;
 //            vector<float> value_row;
             vector<float> floatValues;
@@ -73,6 +94,8 @@ class ScatterPlot{
         {
             int j=0;
             vector<float> floatValues;
+            sp_colx=colx;
+            sp_coly=coly;
 
             for(j=0;j<dataBlock[coly].size();++j)
             {
@@ -107,7 +130,51 @@ class ScatterPlot{
         vector<float> xValues;
         vector<float> yValues_relationship;
         vector<float> xValues_relationship;
+        int sp_colx,sp_coly,sp_colx_no_relationship;
 
+};
+class BarPlot{
+    public:
+        void plot_values(vector<vector <string> > datablock,int col,int bars)
+        {
+            int i=0,j=0,k=0;
+            col_for_bar_plot=col;
+            no_of_bars=bars;
+            vector<float> floatValues;
+            for(i=0;i<datablock[col].size();++i){
+                floatValues.push_back(atof(datablock[col][i].c_str()));
+            }
+            sort(floatValues.begin(),floatValues.end());
+
+            float max_value=floatValues[floatValues.size()-1];
+            float min_value=floatValues[0];
+            float offset=(max_value-min_value )/bars;
+            string s;
+            for(i=0;i<bars;++i){
+
+                s.clear();
+                s.append(patch::to_string(min_value));
+                s.append("-");
+                s.append(patch::to_string(max_value));
+                names_for_various_bars.push_back(s);
+                min_value+=offset;
+                max_value+=offset;
+            }
+            min_value=floatValues[0];
+            for(i=0;i<bars;++i)counts.push_back(0);
+            for(i=0;i<floatValues.size();++i){
+
+                counts[(floatValues[i]-floatValues[0])/offset]++;
+
+            }
+
+
+
+        }
+        vector <string> names_for_various_bars;
+        int col_for_bar_plot;
+        vector<float >counts;
+        int no_of_bars;
 };
 
 class BoxPlot{
@@ -132,6 +199,7 @@ class BoxPlot{
                 }
 
                 sort(floatValues.begin(),floatValues.end());
+
 
 
                 for(i=0;i<floatValues.size();++i){
@@ -172,6 +240,51 @@ class BoxPlot{
 
 ScatterPlot sp;
 BoxPlot bp;
+BarPlot bap;
+
+
+void BarplotDisplay(){
+    glClear(GL_COLOR_BUFFER_BIT);
+    int i=0;
+    for(i=0;i<bap.names_for_various_bars.size();++i){
+        cout<<bap.names_for_various_bars[i]<<endl;
+    }
+    GLfloat space_between_bars;
+
+    glColor3f(1,0,1);
+    glBegin(GL_LINES);
+    glVertex2f(50,50);
+    glVertex2f(50,300);
+    glVertex2f(50,50);
+    glVertex2f(300,50);
+    glEnd();
+    vector<float>yValues;
+    for(i=0;i<bap.counts.size();++i)cout<<endl<<bap.counts[i];
+
+    int max_value=*max_element(bap.counts.begin(),bap.counts.end());
+    cout<<max_value;
+    for(i=0;i<bap.counts.size();++i){
+        yValues.push_back((((bap.counts[i])/max_value)*250)+50);
+//        cout<<endl<<(float)((float)(bap.counts[i])/max_value)*250;
+    }
+    GLfloat xmin=55,ymin=50;
+    GLfloat xmax=280;
+    GLfloat offset=250/(bap.no_of_bars*3);
+    for(i=0;i<bap.no_of_bars;++i){
+        glBegin(GL_QUADS);
+        glColor3f(0,0,1);
+        glVertex2f(xmin,ymin);
+        glVertex2f(xmin+offset,ymin);
+        glVertex2f(xmin+offset,yValues[i]);
+        glVertex2f(xmin,yValues[i]);
+        glEnd();
+
+        xmin=xmin+(2*offset);
+
+    }
+    glFlush();
+
+}
 
 
 void ScatterPlotDisplay(){
@@ -194,6 +307,46 @@ void ScatterPlotDisplay(){
 
         }
         glEnd();
+
+        glBegin(GL_LINES);
+        glColor3f(1,0,0);
+        glVertex2f(25,25);
+        glVertex2f(25,350);
+        glEnd();
+
+        glBegin(GL_LINES);
+        glColor3f(1,0,0);
+        glVertex2f(25,25);
+        glVertex2f(350,25);
+        glEnd();
+
+        int m=0;
+        drawStrokeText(ColumnNames[sp.sp_coly],0,150,0,1.57);
+        drawStrokeText(ColumnNames[sp.sp_colx],150,10,0,0);
+//        glPushMatrix();
+//
+//        glRasterPos2i((0),150);
+//        glColor3f(1,0,1);
+//        glRotatef(90,0,0,0);
+//        for (i=0;m!=strlen(ColumnNames[sp.coly].c_str());++m)
+//        {
+//
+//            cout<<ColumnNames[sp.coly][m];
+//            //COLUMN NAMES PLOTTING
+//            glutStrokeCharacter(GLUT_STROKE_ROMAN,ColumnNames[sp.coly][m]);
+//        }
+//        glPopMatrix();
+//        glRasterPos2i((150),0);
+//        glColor3f(1,0,1);
+//        for (i=0;m!=strlen(ColumnNames[sp.colx].c_str());++m)
+//        {
+//            cout<<ColumnNames[sp.colx][m];
+//            //COLUMN NAMES PLOTTING
+//            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,ColumnNames[sp.colx][m]);
+//        }
+
+
+        glEnd();
         glFlush();
 
     }
@@ -206,7 +359,21 @@ void ScatterPlotDisplay(){
     //        cout<<y<<endl;
             glVertex2f(x,y);
             glColor3f(1,0,0);
+            glBegin(GL_LINES);
+            glColor3f(1,0,0);
+            glVertex2f(25,25);
+            glVertex2f(25,350);
+            glEnd();
+
+            glBegin(GL_LINES);
+            glColor3f(1,0,0);
+            glVertex2f(25,25);
+            glVertex2f(350,25);
+            glEnd();
+            drawStrokeText(ColumnNames[sp.sp_colx_no_relationship],150,10,0,0);
+
         }
+
 
         glEnd();
         glFlush();
@@ -289,7 +456,7 @@ void myinit()
     glPointSize(3.0);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0.0,500.0,0.0,300.0);
+    gluOrtho2D(0.0,500.0,0.0,500.0);
 }
 
 int main(int argc ,char**argv){
@@ -329,30 +496,50 @@ int main(int argc ,char**argv){
 	c.push_back(0);
 	c.push_back(3);
     dataBlock=rows.readRows(fin,ColumnCount);
-
-//    sp.plot_values(dataBlock,3);
-//    sp.plot_relationship_values(dataBlock,6,7);
+    bap.plot_values(dataBlock,0,5);
+    sp.plot_values(dataBlock,3);
+    sp.plot_relationship_values(dataBlock,0,3);
     bp.plot_values(dataBlock,c);
     glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
     glutInitWindowSize(500,500);
     glutInitWindowPosition(0,0);
-	glutCreateWindow("INFERENZ");
-//    glutDisplayFunc(ScatterPlotDisplay);
-    glutDisplayFunc(BoxPlotDisplay);
+	int window_id=glutCreateWindow("INFERENZ");
+//    GLUI_Master.set_glutIdleFunc(NULL);
+    int flags,x,y;
+//    GLUI_Master_Object glui;
+//    GLUI*glui1= GLUI_Master.create_glui("INFERENZ",flags,x,y);
+    int if_sc=0,if_bp=0;
+    int ch;
 
-
+    cout<<"\nEnter what kind of a plot to display 0->scatter  1->box 2->barplot"<<endl;
+    cin>>ch;
+    if (ch==0)display_scatter();
+    else if (ch==1) display_box();
+    else if (ch==2) display_bar();
     myinit();
+
+
+//    glui1->add_button("scatter plot",if_sc);
+//    glui1->add_button("boxplot",if_bp);
+//    glui1->set_main_gfx_window(window_id);
+//    glutDisplayFunc(ScatterPlotDisplay);
+
+
     glutMainLoop();
     return 0;
 
-
-
+}
+void display_scatter(){
+    glutDisplayFunc(ScatterPlotDisplay);
 
 }
-
-
-
+void display_box(){
+    glutDisplayFunc(BoxPlotDisplay);
+}
+void display_bar(){
+    glutDisplayFunc(BarplotDisplay);
+}
 
 //FRONT PAGE
 //#include <GL/glut.h>
@@ -441,3 +628,5 @@ int main(int argc ,char**argv){
 // glutMainLoop();
 // return 0;
 //}
+
+

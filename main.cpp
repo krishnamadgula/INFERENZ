@@ -22,6 +22,7 @@ static int menu_id;
 static int submenu_id;
 static int value = 0;
 int window;
+void text();
 void display_scatter();
 void display_box();
 void display_bar();
@@ -435,28 +436,6 @@ void ScatterPlotDisplay(){
         int m=0;
         drawStrokeText(ColumnNames[sp.sp_coly],0,150,0,3.14);
         drawStrokeText(ColumnNames[sp.sp_colx],150,10,0,0);
-//        glPushMatrix();
-//
-//        glRasterPos2i((0),150);
-//        glColor3f(1,0,1);
-//        glRotatef(90,0,0,0);
-//        for (i=0;m!=strlen(ColumnNames[sp.coly].c_str());++m)
-//        {
-//
-//            cout<<ColumnNames[sp.coly][m];
-//            //COLUMN NAMES PLOTTING
-//            glutStrokeCharacter(GLUT_STROKE_ROMAN,ColumnNames[sp.coly][m]);
-//        }
-//        glPopMatrix();
-//        glRasterPos2i((150),0);
-//        glColor3f(1,0,1);
-//        for (i=0;m!=strlen(ColumnNames[sp.colx].c_str());++m)
-//        {
-//            cout<<ColumnNames[sp.colx][m];
-//            //COLUMN NAMES PLOTTING
-//            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,ColumnNames[sp.colx][m]);
-//        }
-
 
         glEnd();
         glFlush();
@@ -582,7 +561,9 @@ void myinit2()
 }
 void display(){
     glClear(GL_COLOR_BUFFER_BIT);
-    drawStrokeTextHeader("INFERENZ",250,250,1,0,0.2,0.2);
+    glClearColor(1.0,1.0,1.0,1.0);
+//    drawStrokeTextHeader("INFERENZ",250,250,0,0,0.2,0.2);
+    text();
     if (value==1){
         display_scatter();
         myinit();
@@ -657,6 +638,7 @@ int main(int argc ,char**argv){
     glutInitWindowPosition(0,0);
 	window=glutCreateWindow("INFERENZ");
 	glutDisplayFunc(display);
+	myinit();
 	menu_id=glutCreateMenu(menu);
     glutAddMenuEntry("scatterplot",1);
     glutAddMenuEntry("boxplot",2);
@@ -668,10 +650,7 @@ int main(int argc ,char**argv){
 
 //	glutSetMenu(menu_id);
 	cout<<"values is"<<value;
-//    GLUI_Master.set_glutIdleFunc(NULL);
     int flags,x,y;
-//    GLUI_Master_Object glui;
-//    GLUI*glui1= GLUI_Master.create_glui("INFERENZ",flags,x,y);
     int if_sc=0,if_bp=0;
     int ch;
 
@@ -697,15 +676,6 @@ int main(int argc ,char**argv){
 //        display_scatter_3D();
 //        myinit2();
 //    }
-
-
-
-
-//    glui1->add_button("scatter plot",if_sc);
-//    glui1->add_button("boxplot",if_bp);
-//    glui1->set_main_gfx_window(window_id);
-//    glutDisplayFunc(ScatterPlotDisplay);
-
 
     glutMainLoop();
     return 0;
@@ -742,92 +712,60 @@ void display_bar(){
 }
 
 
-//FRONT PAGE
-//#include <GL/glut.h>
-//#include<string.h>
-////#include<GL/freeglut.h>
-//
-//void init2D(float r,float g,float b)
-//{
-// glClearColor(r,g,b,0.0);
-// glMatrixMode(GL_PROJECTION);
-// gluOrtho2D(0.0,600.0,0.0,600.0);
-//}
-//void text()
-//{
-//
-// glColor3f(0,.5,.5);
-// glMatrixMode(GL_PROJECTION);
-// glPushMatrix();
-// glLoadIdentity();
-// gluOrtho2D(0,600,0,600);
-// glMatrixMode(GL_MODELVIEW);
-// glPushMatrix();
-// glLoadIdentity();
-// char* i;
-//
-// glRasterPos2i(230,500);
-// char *a="CG PROJECT";
-// for (i=a;(*i)!='\0';i++)
-// glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,(*i));
-//
-//// glutBitmapString(GLUT_BITMAP_HELVETICA_18,(const unsigned char*));
-//
-// glRasterPos2i(230,450);
-//
-// glColor3f(0.0,0.0,1.0);
-// char a1[]="TITLE :  INFERENZ";
-// for (i=a1;*i!='\0';i++)
-// glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,(*i));
-//
-// glRasterPos2i(450,120);
-// char a2[]="M. NITHYA LAXMI";
-// for (i=a2;*i!='\0';i++)
-// glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,(*i));
-//
-//// glutBitmapString(GLUT_BITMAP_HELVETICA_18,(const unsigned char*)"M. NITHYA LAXMI");
-//
-// glRasterPos2i(450,90);
-// char a3[]="1PE14CS066";
-// for (i=a3;*i!='\0';i++)
-// glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10,(*i));
-//// glutBitmapString(GLUT_BITMAP_HELVETICA_18,(const unsigned char*)"1PE14CS066");
-//
-// glRasterPos2i(450,60);
-// char a4[]="MADGULA KRISHNA CHAITANYA";
-// for (i=a4;*i!='\0';i++)
-// glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,(*i));
-//// glutBitmapString(GLUT_BITMAP_HELVETICA_18,(const unsigned char*)"MADGULA KRISHNA CHAITANYA");
-//
-// glRasterPos2i(450,30);
-// char a5[]="1PE14CS067";
-// for (i=a5;*i!='\0';i++)
-// glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10,(*i));
-//// glutBitmapString(GLUT_BITMAP_HELVETICA_18,(const unsigned char*)"1PE14CS067");
-//
-// glPopMatrix();
-// glMatrixMode(GL_PROJECTION);
-// glPopMatrix();
-// glMatrixMode(GL_MODELVIEW);
-//}
-//void display()
-//{
-// glClear(GL_COLOR_BUFFER_BIT);
-// glColor3f(0.0,0.0,0.0);
-// text();
-// glFlush();
-//}
-//int main(int argc,char** argv)
-//{
-// glutInit(&argc,argv);
-// glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
-// glutInitWindowPosition(0,0);
-// glutInitWindowSize(1000,1000);
-// glutCreateWindow("CG Mini Project");
-// glutDisplayFunc(display);
-// init2D(1.0,1.0,1.0);
-// glutMainLoop();
-// return 0;
-//}
 
+void text()
+{
 
+ glColor3f(0,.5,.5);
+ glMatrixMode(GL_PROJECTION);
+ glPushMatrix();
+
+ glMatrixMode(GL_MODELVIEW);
+ glPushMatrix();
+ glLoadIdentity();
+ char* i;
+
+ glRasterPos2i(230,400);
+ char *a="CG PROJECT";
+ for (i=a;(*i)!='\0';i++)
+ glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,(*i));
+
+// glutBitmapString(GLUT_BITMAP_HELVETICA_18,(const unsigned char*));
+
+ glRasterPos2i(230,350);
+
+ glColor3f(0.0,0.0,1.0);
+ char a1[]="TITLE :  INFERENZ";
+ for (i=a1;*i!='\0';i++)
+ glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,(*i));
+
+ glRasterPos2i(350,120);
+ char a2[]="M. NITHYA LAXMI";
+ for (i=a2;*i!='\0';i++)
+ glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,(*i));
+
+// glutBitmapString(GLUT_BITMAP_HELVETICA_18,(const unsigned char*)"M. NITHYA LAXMI");
+
+ glRasterPos2i(350,90);
+ char a3[]="1PE14CS066";
+ for (i=a3;*i!='\0';i++)
+ glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10,(*i));
+// glutBitmapString(GLUT_BITMAP_HELVETICA_18,(const unsigned char*)"1PE14CS066");
+
+ glRasterPos2i(350,60);
+ char a4[]="MADGULA KRISHNA CHAITANYA";
+ for (i=a4;*i!='\0';i++)
+ glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10,(*i));
+// glutBitmapString(GLUT_BITMAP_HELVETICA_18,(const unsigned char*)"MADGULA KRISHNA CHAITANYA");
+
+ glRasterPos2i(350,30);
+ char a5[]="1PE14CS067";
+ for (i=a5;*i!='\0';i++)
+ glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10,(*i));
+// glutBitmapString(GLUT_BITMAP_HELVETICA_18,(const unsigned char*)"1PE14CS067");
+
+ glPopMatrix();
+ glMatrixMode(GL_PROJECTION);
+ glPopMatrix();
+ glMatrixMode(GL_MODELVIEW);
+}

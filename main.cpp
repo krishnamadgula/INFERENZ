@@ -627,7 +627,7 @@ int main(int argc ,char**argv){
 	c.push_back(0);
 	c.push_back(3);
     dataBlock=rows.readRows(fin,ColumnCount);
-    bap.plot_values(dataBlock,0,5);
+    bap.plot_values(dataBlock,2,7);
     sp3.plot_relationship_values(dataBlock,0,2,3);
     sp.plot_values(dataBlock,3);
     sp.plot_relationship_values(dataBlock,0,3);
@@ -684,31 +684,33 @@ int main(int argc ,char**argv){
 
 void display_scatter_3D(){
 
-    glutInitWindowSize(500,500);
-    glutInitWindowPosition(0,0);
-    glutCreateWindow("scatter");
-    glutDisplayFunc(ScatterPlot_3D_Display);
-
+//    glutInitWindowSize(500,500);
+//    glutInitWindowPosition(0,0);
+//    glutCreateWindow("scatter");
+//    glutDisplayFunc(ScatterPlot_3D_Display);
+    ScatterPlot_3D_Display();
 }
 void display_scatter(){
-    cout<<"hi here";
-    glutInitWindowSize(500,500);
-    glutInitWindowPosition(0,0);
-    glutCreateWindow("scatter");
-    glutDisplayFunc(ScatterPlotDisplay);
-
+//    cout<<"hi here";
+//    glutInitWindowSize(500,500);
+//    glutInitWindowPosition(0,0);
+//    glutCreateWindow("scatter");
+//    glutDisplayFunc(ScatterPlotDisplay);
+    ScatterPlotDisplay();
 }
 void display_box(){
-    glutInitWindowSize(500,500);
-    glutInitWindowPosition(0,0);
-    glutCreateWindow("box");
-    glutDisplayFunc(BoxPlotDisplay);
+//    glutInitWindowSize(500,500);
+//    glutInitWindowPosition(0,0);
+//    glutCreateWindow("box");
+//    glutDisplayFunc(BoxPlotDisplay);
+    BoxPlotDisplay();
 }
 void display_bar(){
-    glutInitWindowSize(500,500);
-    glutInitWindowPosition(0,0);
-    glutCreateWindow("bar");
-    glutDisplayFunc(BarplotDisplay);
+//    glutInitWindowSize(500,500);
+//    glutInitWindowPosition(0,0);
+//    glutCreateWindow("bar");
+//    glutDisplayFunc(BarplotDisplay);
+    BarplotDisplay();
 }
 
 

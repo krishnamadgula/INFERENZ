@@ -22,6 +22,7 @@ static int menu_id;
 static int submenu_id;
 static int value = 0;
 int window;
+int mousex=0,mousey=0;
 void text();
 void display_scatter();
 void display_box();
@@ -30,6 +31,7 @@ void display_scatter_3D();
 void ScatterPlotDisplay();
 void BoxPlotDisplay();
 void BarplotDisplay();
+void passive(int x,int y);
 void menu(int num){
     if(num == 0){
         glutDestroyWindow(window);
@@ -63,13 +65,14 @@ void drawStrokeText(basic_string<char> string1,int x,int y,int z,float angle_of_
     char *c;
     glPushMatrix();
     glTranslatef(x+2, y,z);
-    glScalef(0.03f,0.05f,z);
+    glScalef(0.05f,0.06f,z);
     int m=0;
     glRotatef(angle_of_rotation,1,0,0);
     for (; m != strlen(string1.c_str()); m++)
     {
         glutStrokeCharacter(GLUT_STROKE_ROMAN , string1[m]);
     }
+//    cout<<"HI";
     glPopMatrix();
 }
 
@@ -174,6 +177,8 @@ class ScatterPlot{
             for(i=0;i<yValues.size();++i){
                 yValues[i]=yValues[i]/ (yValues[yValues.size()-1]);
             }
+            y_max_value=yValues[yValues.size()-1];
+//            x_max_value=sortedXvalues[sortedXvalues.size()-1];
 
 //             for(j=0;j<floatValues.size();++j){
 //                 cout<<yValues[j]<<endl;
@@ -214,6 +219,8 @@ class ScatterPlot{
                 yValues_relationship[j]=yValues_relationship[j]/sortedYvalues[sortedYvalues.size()-1];
 
             }
+            y_max_value=sortedYvalues[sortedYvalues.size()-1];
+            x_max_value=sortedXvalues[sortedXvalues.size()-1];
 
 
         }
@@ -222,6 +229,7 @@ class ScatterPlot{
         vector<float> xValues;
         vector<float> yValues_relationship;
         vector<float> xValues_relationship;
+        float x_max_value,y_max_value;
         int sp_colx,sp_coly,sp_colx_no_relationship;
 
 };
@@ -359,6 +367,7 @@ void BarplotDisplay(){
         yValues.push_back((((bap.counts[i])/max_value)*250)+50);
 //        cout<<endl<<(float)((float)(bap.counts[i])/max_value)*250;
     }
+
     drawStrokeTextHeader(ColumnNames[bap.col_for_bar_plot],250,400,1,0,0.1,.1);
 
     GLfloat xmin=55,ymin=50;
@@ -436,6 +445,12 @@ void ScatterPlotDisplay(){
         int m=0;
         drawStrokeText(ColumnNames[sp.sp_coly],0,150,0,3.14);
         drawStrokeText(ColumnNames[sp.sp_colx],150,10,0,0);
+        cout<<patch::to_string(((mousey-50)*sp.y_max_value)/300)<<endl;
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(000,500.0,00,500);
+        glMatrixMode(GL_MODELVIEW);
+        drawStrokeText(patch::to_string(((mousey-50)*sp.y_max_value)/300),mousex,mousey,0,0);
 
         glEnd();
         glFlush();
@@ -464,7 +479,8 @@ void ScatterPlotDisplay(){
             drawStrokeText(ColumnNames[sp.sp_colx_no_relationship],150,10,0,0);
 
         }
-
+        cout<<patch::to_string(((mousey-50)*sp.y_max_value)/300)<<endl;
+        drawStrokeText(patch::to_string(((mousey-50)*sp.y_max_value)/300),mousex,mousey,0,0);
 
         glEnd();
         glFlush();
@@ -638,6 +654,7 @@ int main(int argc ,char**argv){
     glutInitWindowPosition(0,0);
 	window=glutCreateWindow("INFERENZ");
 	glutDisplayFunc(display);
+	glutPassiveMotionFunc(passive);
 	myinit();
 	menu_id=glutCreateMenu(menu);
     glutAddMenuEntry("scatterplot",1);
@@ -770,4 +787,12 @@ void text()
  glMatrixMode(GL_PROJECTION);
  glPopMatrix();
  glMatrixMode(GL_MODELVIEW);
+}
+
+void passive(int x1,int y1)
+{
+//    cout<<endl<<mousey;
+    mousex=x1;
+    mousey=y1;
+
 }
